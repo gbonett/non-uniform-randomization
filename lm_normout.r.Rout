@@ -58,7 +58,54 @@ Type 'q()' to quit R.
 [1] 1.100057
 >  mean(mat2[,3])
 [1] 0.6385314
->  mean(mat2[,4])
-Error in mat2[, 4] : subscript out of bounds
-Calls: mean
-Execution halted
+> 
+> 
+> 
+> 
+> #Random Selection with treatment effect interaction
+> N<-30
+> size<-10000
+> delta<-1
+> mat3<-c()
+> mat2<-c()
+> 
+> for(i in 1:size){
++ 
++   priority <- runif(N)
++   random <- runif(N)
++   coinflip <- c(rep(.5,times=30))
++   #selection uses coinflip, not priority score
++   assignment <- coinflip>=random
++   outcome <- rnorm(N)
++   outcome[assignment]<-outcome[assignment]+delta*priority[assignment]
++ 
++   #generate linear model
++   ss3_lm <- lm(outcome ~ assignment + priority + assignment*priority)
++   ss2_lm <- lm(outcome ~ assignment + priority)
++   mat3<-rbind(mat3,summary(ss3_lm)$coef[,1]/summary(ss3_lm)$coef[,2])
++   mat2<-rbind(mat2,summary(ss2_lm)$coef[,1]/summary(ss2_lm)$coef[,2])
++ 
++ }
+> 
+> names(coef(lm))
+[1] "(Intercept)"             "assignmentTRUE"         
+[3] "priority"                "assignmentTRUE:priority"
+> mean(mat3[,1])
+[1] 0.004136367
+> mean(mat3[,2])
+[1] 0.002587151
+> mean(mat3[,3])
+[1] -0.005338272
+> mean(mat3[,4])
+[1] 0.75541
+>  
+> mean(mat2[,1])
+[1] -0.590257
+> mean(mat2[,2])
+[1] 1.349619
+> mean(mat2[,3])
+[1] 0.7688819
+> 
+> proc.time()
+   user  system elapsed 
+ 90.864   0.678  91.836 
