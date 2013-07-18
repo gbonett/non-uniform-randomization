@@ -1,0 +1,89 @@
+
+R version 3.0.1 Patched (2013-05-26 r62815) -- "Good Sport"
+Copyright (C) 2013 The R Foundation for Statistical Computing
+Platform: amd64-portbld-freebsd9.1 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+[Previously saved workspace restored]
+
+> # Covar Selection with treatment effect interaction
+> N<-30
+> size<-1000000
+> delta<-1
+> 
+> treject<-c()
+> out.varassign<-c()
+> out.varnot<-c()
+> out.meanassign<-c()
+> 
+> for(i in 1:size){
++   priority <- runif(N)
++   random <- runif(N)
++   assignment <- priority>=random
++   outcome <- rnorm(N)
++   outcome[assignment]<-outcome[assignment]+delta*priority[assignment]
++   out.varassign[i]<-var(outcome[assignment])
++   out.varnot[i]<-var(outcome[!assignment])
++   out.meanassign[i]<-mean(outcome[assignment])
++   tstat<-t.test(outcome[assignment],outcome[!assignment],var.equal=T)$statistic
++   tcrit<-qt(.975,df=N-2)
++   treject[i]<-abs(tstat)>=tcrit
++ }
+> 
+> sum(treject)/size
+[1] 0.401341
+> mean(out.varassign)
+[1] 1.055592
+> mean(out.varnot)
+[1] 1.000149
+> mean(out.meanassign)
+[1] 0.6666739
+> 
+> #Random Selection with treatment effect interaction
+> N<-30
+> size<-1000000
+> delta<-1
+> 
+> treject<-c()
+> out.varassign<-c()
+> out.varnot<-c()
+> out.meanassign<-c()
+> 
+> for(i in 1:size){
++   priority <- runif(N)
++   random <- runif(N)
++   coinflip <- c(rep(.5,times=30))
++   #selection uses coinflip, not priority score
++   assignment <- coinflip>=random
++   outcome <- rnorm(N)
++   outcome[assignment]<-outcome[assignment]+delta*priority[assignment]
++   out.varassign[i]<-var(outcome[assignment])
++   out.varnot[i]<-var(outcome[!assignment])
++   out.meanassign[i]<-mean(outcome[assignment])
++   tstat<-t.test(outcome[assignment],outcome[!assignment],var.equal=T)$statistic
++   tcrit<-qt(.975,df=N-2)
++   treject[i]<-abs(tstat)>=tcrit
++ }
+> sum(treject)/size
+[1] 0.246848
+> mean(out.varassign)
+[1] 1.083718
+> mean(out.varnot)
+[1] 0.999674
+> mean(out.meanassign)
+[1] 0.4998673
+> 
+> proc.time()
+    user   system  elapsed 
+48773.49 12526.44 61868.38 

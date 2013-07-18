@@ -1,0 +1,118 @@
+
+R version 3.0.1 Patched (2013-05-26 r62815) -- "Good Sport"
+Copyright (C) 2013 The R Foundation for Statistical Computing
+Platform: amd64-portbld-freebsd9.1 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+[Previously saved workspace restored]
+
+> # Covar Selection with treatment effect interaction
+> N<-30
+> size<-100000
+> delta<-1
+> mat3<-c()
+> mat2<-c()
+> 
+> for(i in 1:size){
++ 
++   priority <- runif(N)
++   random <- runif(N)
++   assignment <- priority>=random
++   outcome <- rnorm(N)
++   outcome[assignment]<-outcome[assignment]+delta*(1-priority[assignment])
++ 
++   #generate linear model
++   ss3_lm <- lm(outcome ~ assignment + priority + assignment*priority)
++   ss2_lm <- lm(outcome ~ assignment + priority)
++   mat3<-rbind(mat,summary(ss3_lm)$coef[,1]/summary(ss3_lm)$coef[,2])
++   mat2<-rbind(mat,summary(ss2_lm)$coef[,1]/summary(ss2_lm)$coef[,2])
++ 
++ }
+There were 50 or more warnings (use warnings() to see the first 50)
+> 
+> names(coef(lm))
+[1] "(Intercept)"             "assignmentTRUE"         
+[3] "priority"                "assignmentTRUE:priority"
+>  mean(mat3[,1])
+[1] 0.001521824
+>  mean(mat3[,2])
+[1] 0.001358085
+>  mean(mat3[,3])
+[1] 0.00199847
+>  mean(mat3[,4])
+[1] 0.7504876
+>  
+>  mean(mat2[,1])
+[1] 0.001520032
+>  mean(mat2[,2])
+[1] 0.001365622
+>  mean(mat2[,3])
+[1] 0.001994195
+>  mean(mat2[,4])
+[1] 0.7504224
+> 
+> 
+> 
+> 
+> #Random Selection with treatment effect interaction
+> N<-30
+> size<-100000
+> delta<-1
+> mat3<-c()
+> mat2<-c()
+> 
+> for(i in 1:size){
++ 
++   priority <- runif(N)
++   random <- runif(N)
++   coinflip <- c(rep(.5,times=30))
++   #selection uses coinflip, not priority score
++   assignment <- coinflip>=random
++   outcome <- rnorm(N)
++   outcome[assignment]<-outcome[assignment]+delta*(1-priority[assignment])
++ 
++   #generate linear model
++   ss3_lm <- lm(outcome ~ assignment + priority + assignment*priority)
++   ss2_lm <- lm(outcome ~ assignment + priority)
++   mat3<-rbind(mat,summary(ss3_lm)$coef[,1]/summary(ss3_lm)$coef[,2])
++   mat2<-rbind(mat,summary(ss2_lm)$coef[,1]/summary(ss2_lm)$coef[,2])
++ 
++ }
+There were 50 or more warnings (use warnings() to see the first 50)
+> 
+> names(coef(lm))
+[1] "(Intercept)"             "assignmentTRUE"         
+[3] "priority"                "assignmentTRUE:priority"
+> mean(mat3[,1])
+[1] 0.00162649
+> mean(mat3[,2])
+[1] 0.001411463
+> mean(mat3[,3])
+[1] 0.001912248
+> mean(mat3[,4])
+[1] 0.7504665
+>  
+> mean(mat2[,1])
+[1] 0.001654371
+> mean(mat2[,2])
+[1] 0.00142047
+> mean(mat2[,3])
+[1] 0.001863268
+> mean(mat2[,4])
+[1] 0.7505567
+> 
+> 
+> proc.time()
+    user   system  elapsed 
+1515.963   25.193 1549.977 
