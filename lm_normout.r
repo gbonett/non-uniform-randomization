@@ -30,7 +30,6 @@ names(coef(lm))
  mean(mat2[,1])
  mean(mat2[,2])
  mean(mat2[,3])
- mean(mat2[,4])
 
 
 
@@ -69,5 +68,3 @@ mean(mat3[,4])
 mean(mat2[,1])
 mean(mat2[,2])
 mean(mat2[,3])
-mean(mat2[,4])
-
