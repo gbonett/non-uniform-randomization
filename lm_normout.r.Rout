@@ -19,7 +19,7 @@ Type 'q()' to quit R.
 
 > # Covar Selection with treatment effect interaction
 > N<-30
-> size<-100000
+> size<-10000
 > delta<-1
 > mat3<-c()
 > mat2<-c()
@@ -35,84 +35,30 @@ Type 'q()' to quit R.
 +   #generate linear model
 +   ss3_lm <- lm(outcome ~ assignment + priority + assignment*priority)
 +   ss2_lm <- lm(outcome ~ assignment + priority)
-+   mat3<-rbind(mat,summary(ss3_lm)$coef[,1]/summary(ss3_lm)$coef[,2])
-+   mat2<-rbind(mat,summary(ss2_lm)$coef[,1]/summary(ss2_lm)$coef[,2])
++   mat3<-rbind(mat3,summary(ss3_lm)$coef[,1]/summary(ss3_lm)$coef[,2])
++   mat2<-rbind(mat2,summary(ss2_lm)$coef[,1]/summary(ss2_lm)$coef[,2])
 + 
 + }
-There were 50 or more warnings (use warnings() to see the first 50)
 > 
 > names(coef(lm))
 [1] "(Intercept)"             "assignmentTRUE"         
 [3] "priority"                "assignmentTRUE:priority"
 >  mean(mat3[,1])
-[1] 0.001521824
+[1] -0.01052415
 >  mean(mat3[,2])
-[1] 0.001312454
+[1] 0.01968034
 >  mean(mat3[,3])
-[1] 0.00199847
+[1] 0.01733798
 >  mean(mat3[,4])
-[1] 0.7505476
+[1] 0.5864938
 >  
 >  mean(mat2[,1])
-[1] 0.001488272
+[1] -0.440231
 >  mean(mat2[,2])
-[1] 0.001384389
+[1] 1.100057
 >  mean(mat2[,3])
-[1] 0.002037865
+[1] 0.6385314
 >  mean(mat2[,4])
-[1] 0.7503906
-> 
-> 
-> 
-> 
-> #Random Selection with treatment effect interaction
-> N<-30
-> size<-100000
-> delta<-1
-> mat3<-c()
-> mat2<-c()
-> 
-> for(i in 1:size){
-+ 
-+   priority <- runif(N)
-+   random <- runif(N)
-+   coinflip <- c(rep(.5,times=30))
-+   #selection uses coinflip, not priority score
-+   assignment <- coinflip>=random
-+   outcome <- rnorm(N)
-+   outcome[assignment]<-outcome[assignment]+delta*priority[assignment]
-+ 
-+   #generate linear model
-+   ss3_lm <- lm(outcome ~ assignment + priority + assignment*priority)
-+   ss2_lm <- lm(outcome ~ assignment + priority)
-+   mat3<-rbind(mat,summary(ss3_lm)$coef[,1]/summary(ss3_lm)$coef[,2])
-+   mat2<-rbind(mat,summary(ss2_lm)$coef[,1]/summary(ss2_lm)$coef[,2])
-+ 
-+ }
-There were 50 or more warnings (use warnings() to see the first 50)
-> 
-> names(coef(lm))
-[1] "(Intercept)"             "assignmentTRUE"         
-[3] "priority"                "assignmentTRUE:priority"
-> mean(mat3[,1])
-[1] 0.00162649
-> mean(mat3[,2])
-[1] 0.001317815
-> mean(mat3[,3])
-[1] 0.001912248
-> mean(mat3[,4])
-[1] 0.7505651
->  
-> mean(mat2[,1])
-[1] 0.00159635
-> mean(mat2[,2])
-[1] 0.001396863
-> mean(mat2[,3])
-[1] 0.001946745
-> mean(mat2[,4])
-[1] 0.7504987
-> 
-> 
-> proc.time()
-    user   system  elapsed 
-1514.241   22.729 1546.003 
+Error in mat2[, 4] : subscript out of bounds
+Calls: mean
+Execution halted

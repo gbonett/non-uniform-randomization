@@ -1,6 +1,6 @@
 # Covar Selection with treatment effect interaction
 N<-30
-size<-100000
+size<-10000
 delta<-1
 mat3<-c()
 mat2<-c()
@@ -16,8 +16,8 @@ for(i in 1:size){
   #generate linear model
   ss3_lm <- lm(outcome ~ assignment + priority + assignment*priority)
   ss2_lm <- lm(outcome ~ assignment + priority)
-  mat3<-rbind(mat,summary(ss3_lm)$coef[,1]/summary(ss3_lm)$coef[,2])
-  mat2<-rbind(mat,summary(ss2_lm)$coef[,1]/summary(ss2_lm)$coef[,2])
+  mat3<-rbind(mat3,summary(ss3_lm)$coef[,1]/summary(ss3_lm)$coef[,2])
+  mat2<-rbind(mat2,summary(ss2_lm)$coef[,1]/summary(ss2_lm)$coef[,2])
 
 }
 
@@ -37,7 +37,7 @@ names(coef(lm))
 
 #Random Selection with treatment effect interaction
 N<-30
-size<-100000
+size<-10000
 delta<-1
 mat3<-c()
 mat2<-c()
@@ -55,8 +55,8 @@ for(i in 1:size){
   #generate linear model
   ss3_lm <- lm(outcome ~ assignment + priority + assignment*priority)
   ss2_lm <- lm(outcome ~ assignment + priority)
-  mat3<-rbind(mat,summary(ss3_lm)$coef[,1]/summary(ss3_lm)$coef[,2])
-  mat2<-rbind(mat,summary(ss2_lm)$coef[,1]/summary(ss2_lm)$coef[,2])
+  mat3<-rbind(mat3,summary(ss3_lm)$coef[,1]/summary(ss3_lm)$coef[,2])
+  mat2<-rbind(mat2,summary(ss2_lm)$coef[,1]/summary(ss2_lm)$coef[,2])
 
 }
 
