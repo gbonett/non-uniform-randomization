@@ -1,0 +1,151 @@
+> # Covar Selection with treatment effect interaction
+> N<-30
+> size<-100000
+> delta<-1
+> 
+> tstat3<-c()
+> tstat2<-c()
+> tstat1<-c()
+> 
+> the_coef3<-c()
+> the_coef2<-c()
+> the_coef1<-c()
+> 
+> for(i in 1:size){
++ 
++   priority <- runif(N)
++   random <- runif(N)
++   group <- priority>=random
++   outcome <- rnorm(N)
++   outcome[group] <- outcome[group] + delta
++ 
++   #generate linear models
++   ss3_lm <- lm(outcome ~ group + priority + group*priority)
++   ss2_lm <- lm(outcome ~ group + priority)
++   ss1_lm <- lm(outcome ~ group)
++ 
++   #calculate T statistic for each linear model
++   tstat3<-rbind(tstat3,summary(ss3_lm)$coef[,1]/summary(ss3_lm)$coef[,2])
++   tstat2<-rbind(tstat2,summary(ss2_lm)$coef[,1]/summary(ss2_lm)$coef[,2])
++   tstat1<-rbind(tstat1,summary(ss1_lm)$coef[,1]/summary(ss1_lm)$coef[,2])
++ 
++   #coefficiencts for each linear model
++   the_coef3<-rbind(the_coef3,summary(ss3_lm)$coef[,1])
++   the_coef2<-rbind(the_coef2,summary(ss2_lm)$coef[,1])
++   the_coef1<-rbind(the_coef1,summary(ss1_lm)$coef[,1])
++ 
++ }
+> 
+> cat("Case with correlation and interaciton effect. \n \n")
+Case with no priority score correlation or interaciton effect. 
+ 
+> cat("N=", N, "\n")
+N= 30 
+> cat("size=", size , "\n")
+size= 1e+05 
+> 
+> cat("Output from non-uniform randomization experimental design \n")
+Output from non-uniform randomization experimental design 
+> 
+> cat("Model 3 contains:      ", names(coef(ss3_lm)), "\n" )
+Model 3 contains:       (Intercept) groupTRUE priority groupTRUE:priority 
+> cat("Model 3 coef estimates:", sprintf("%1.6f",colMeans(the_coef3)) , "\n" )
+Model 3 coef estimates: -0.000251 0.997042 0.001253 0.003129 
+> cat("Model 3 t statistics:  ", sprintf("%1.6f",colMeans(tstat3)), "\n \n" )
+Model 3 t statistics:   0.000070 1.075749 -0.000046 0.000714 
+ 
+> 
+> 
+> cat("Model 2 contains:      ", names(coef(ss2_lm)), "\n" )
+Model 2 contains:       (Intercept) groupTRUE priority 
+> cat("Model 2 coef estimates:", sprintf("%1.6f", colMeans(the_coef2)) , "\n" )
+Model 2 coef estimates: -0.000201 0.999767 0.000662 
+> cat("Model 2 t statistics:  ", sprintf("%1.6f", colMeans(tstat2)), "\n \n" )
+Model 2 t statistics:   -0.000500 2.219561 0.000266 
+ 
+> 
+> 
+> cat("Model 1 contains:      ", names(coef(ss1_lm)), "\n" )
+Model 1 contains:       (Intercept) groupTRUE 
+> cat("Model 1 coef estimates:", sprintf("%1.6f", colMeans(the_coef1)) , "\n" )
+Model 1 coef estimates: 0.000058 0.999985 
+> cat("Model 1 t statistics:  ", sprintf("%1.6f", colMeans(tstat1)), "\n \n" )
+Model 1 t statistics:   0.000629 2.763694 
+ 
+> 
+> 
+> #Random Selection with treatment effect interaction
+> tstat3<-c()
+> tstat2<-c()
+> tstat1<-c()
+> 
+> the_coef3<-c()
+> the_coef2<-c()
+> the_coef1<-c()
+> 
+> for(i in 1:size){
++ 
++   priority <- runif(N)
++   random <- runif(N)
++   coinflip <- c(rep(.5,times=30))
++ 
++   #selection uses coinflip, not priority score
++   group <- coinflip>=random
++   outcome <- rnorm(N)
++   outcome[group] <- outcome[group] + delta
++ 
++   #generate linear model
++   ss3_lm <- lm(outcome ~ group + priority + group*priority)
++   ss2_lm <- lm(outcome ~ group + priority)
++   ss1_lm <- lm(outcome ~ group)
++ 
++   #calculate T statistic for each linear model
++   tstat3<-rbind(tstat3,summary(ss3_lm)$coef[,1]/summary(ss3_lm)$coef[,2])
++   tstat2<-rbind(tstat2,summary(ss2_lm)$coef[,1]/summary(ss2_lm)$coef[,2])
++   tstat1<-rbind(tstat1,summary(ss1_lm)$coef[,1]/summary(ss1_lm)$coef[,2])
++ 
++   #coefficiencts for each linear model
++   the_coef3<-rbind(the_coef3,summary(ss3_lm)$coef[,1])
++   the_coef2<-rbind(the_coef2,summary(ss2_lm)$coef[,1])
++   the_coef1<-rbind(the_coef1,summary(ss1_lm)$coef[,1])
++ 
++ }
+> 
+> 
+> cat("Output from traditional experimental design \n")
+Output from traditional experimental design 
+> cat("N=", N, "\n")
+N= 30 
+> cat("size=", size , "\n")
+size= 1e+05 
+> 
+> cat("Model 3 contains:      ", names(coef(ss3_lm)), "\n" )
+Model 3 contains:       (Intercept) groupTRUE priority groupTRUE:priority 
+> cat("Model 3 coef estimates:", sprintf("%1.6f", colMeans(the_coef3)) , "\n" )
+Model 3 coef estimates: -0.002456 1.006158 0.004457 -0.009543 
+> cat("Model 3 t statistics:  ", sprintf("%1.6f", colMeans(tstat3)), "\n \n" )
+Model 3 t statistics:   -0.004761 1.335135 0.005521 -0.007742 
+ 
+> 
+> 
+> cat("Model 2 contains:      ", names(coef(ss2_lm)), "\n" )
+Model 2 contains:       (Intercept) groupTRUE priority 
+> cat("Model 2 coef estimates:", sprintf("%1.6f", colMeans(the_coef2)) , "\n" )
+Model 2 coef estimates: -0.000021 1.001229 -0.000196 
+> cat("Model 2 t statistics:  ", sprintf("%1.6f", colMeans(tstat2)), "\n \n" )
+Model 2 t statistics:   -0.000224 2.724660 0.000222 
+ 
+> 
+> 
+> cat("Model 1 contains:      ", names(coef(ss1_lm)), "\n" )
+Model 1 contains:       (Intercept) groupTRUE 
+> cat("Model 1 coef estimates:", sprintf("%1.6f", colMeans(the_coef1)) , "\n" )
+Model 1 coef estimates: -0.000034 1.001026 
+> cat("Model 1 t statistics:  ", sprintf("%1.6f", colMeans(tstat1)), "\n \n" )
+Model 1 t statistics:   0.000040 2.770431 
+ 
+> 
+> 
+> proc.time()
+    user   system  elapsed 
+8257.526  264.782 8744.062 

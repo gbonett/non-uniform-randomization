@@ -1,0 +1,34 @@
+Case with correlation and interaciton effect. 
+ 
+N= 30 
+size= 1e+05 
+Output from non-uniform randomization experimental design 
+Model 3 contains:       (Intercept) groupTRUE priority groupTRUE:priority 
+Model 3 coef estimates: 0.000000 -0.000000 1.000000 1.000000 
+Model 3 t statistics:   0.007577 -0.026759 5375612395790370.000000 3659655516216350.000000 
+ 
+Model 2 contains:       (Intercept) groupTRUE priority 
+Model 2 coef estimates: -0.164484 0.499851 1.500192 
+Model 2 t statistics:   -3.830377 9.613741 16.506430 
+ 
+Model 1 contains:       (Intercept) groupTRUE 
+Model 1 coef estimates: 0.333563 0.999117 
+Model 1 t statistics:   3.575133 7.521322 
+ 
+Output from traditional experimental design 
+N= 30 
+size= 1e+05 
+Model 3 contains:       (Intercept) groupTRUE priority groupTRUE:priority 
+Model 3 coef estimates: 0.000000 0.000000 1.000000 1.000000 
+Model 3 t statistics:   0.027722 0.009035 7007028361726114.000000 4801768209790522.000000 
+ 
+Model 2 contains:       (Intercept) groupTRUE priority 
+Model 2 coef estimates: -0.249894 0.499836 1.499764 
+Model 2 t statistics:   -4.168657 9.484806 16.260032 
+ 
+Model 1 contains:       (Intercept) groupTRUE 
+Model 1 coef estimates: 0.500084 0.499440 
+Model 1 t statistics:   4.345899 3.010980 
+ 
+    user   system  elapsed 
+8191.633  371.649 8780.587 
