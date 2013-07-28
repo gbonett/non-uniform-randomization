@@ -17,7 +17,7 @@ for(i in 1:size){
   random <- runif(N)
   group <- priority>=random
   outcome <- rnorm(N)
-  outcome <- priority
+  outcome <- outcome + priority
   outcome[group] <- outcome[group] + delta*priority[group]
 
   #generate linear models
@@ -76,7 +76,7 @@ for(i in 1:size){
   #selection uses coinflip, not priority score
   group <- coinflip>=random
   outcome <- rnorm(N)
-  outcome <- priority
+  outcome <- outcome + priority
   outcome[group] <- outcome[group] + delta*priority[group]
 
   #generate linear model

@@ -17,7 +17,7 @@
 +   random <- runif(N)
 +   group <- priority>=random
 +   outcome <- rnorm(N)
-+   outcome <- priority
++   outcome <- outcome + priority
 +   outcome[group] <- outcome[group] + delta
 + 
 +   #generate linear models
@@ -37,7 +37,7 @@
 + 
 + }
 > 
-> cat("Case with correlation and interaciton effect. \n \n")
+> cat("Case with priority score correlation and no interaciton effect. \n \n")
 Case with priority score correlation and no interaciton effect. 
  
 > cat("N=", N, "\n")
@@ -51,27 +51,27 @@ Output from non-uniform randomization experimental design
 > cat("Model 3 contains:      ", names(coef(ss3_lm)), "\n" )
 Model 3 contains:       (Intercept) groupTRUE priority groupTRUE:priority 
 > cat("Model 3 coef estimates:", sprintf("%1.6f",colMeans(the_coef3)) , "\n" )
-Model 3 coef estimates: -0.000000 1.000000 1.000000 0.000000 
+Model 3 coef estimates: -0.000324 1.003440 1.002593 -0.005529 
 > cat("Model 3 t statistics:  ", sprintf("%1.6f",colMeans(tstat3)), "\n \n" )
-Model 3 t statistics:   -0.759475 4656941002070101.000000 3940243513296882.500000 0.012102 
+Model 3 t statistics:   -0.000617 1.082143 0.895517 -0.004135 
  
 > 
 > 
 > cat("Model 2 contains:      ", names(coef(ss2_lm)), "\n" )
 Model 2 contains:       (Intercept) groupTRUE priority 
 > cat("Model 2 coef estimates:", sprintf("%1.6f", colMeans(the_coef2)) , "\n" )
-Model 2 coef estimates: -0.000000 1.000000 1.000000 
+Model 2 coef estimates: 0.001014 1.001045 0.998833 
 > cat("Model 2 t statistics:  ", sprintf("%1.6f", colMeans(tstat2)), "\n \n" )
-Model 2 t statistics:   -0.989124 9640495309879346.000000 5517845955704826.000000 
+Model 2 t statistics:   0.002721 2.226694 1.274600 
  
 > 
 > 
 > cat("Model 1 contains:      ", names(coef(ss1_lm)), "\n" )
 Model 1 contains:       (Intercept) groupTRUE 
 > cat("Model 1 coef estimates:", sprintf("%1.6f", colMeans(the_coef1)) , "\n" )
-Model 1 coef estimates: 0.333029 1.333247 
+Model 1 coef estimates: 0.334052 1.334230 
 > cat("Model 1 t statistics:  ", sprintf("%1.6f", colMeans(tstat1)), "\n \n" )
-Model 1 t statistics:   5.528173 15.606019 
+Model 1 t statistics:   1.288433 3.594414 
  
 > 
 > 
@@ -93,7 +93,7 @@ Model 1 t statistics:   5.528173 15.606019
 +   #selection uses coinflip, not priority score
 +   group <- coinflip>=random
 +   outcome <- rnorm(N)
-+   outcome <- priority
++   outcome <- outcome + priority
 +   outcome[group] <- outcome[group] + delta
 + 
 +   #generate linear model
@@ -124,30 +124,30 @@ size= 1e+05
 > cat("Model 3 contains:      ", names(coef(ss3_lm)), "\n" )
 Model 3 contains:       (Intercept) groupTRUE priority groupTRUE:priority 
 > cat("Model 3 coef estimates:", sprintf("%1.6f", colMeans(the_coef3)) , "\n" )
-Model 3 coef estimates: -0.000000 1.000000 1.000000 -0.000000 
+Model 3 coef estimates: -0.000333 1.000351 0.999281 -0.000516 
 > cat("Model 3 t statistics:  ", sprintf("%1.6f", colMeans(tstat3)), "\n \n" )
-Model 3 t statistics:   -0.656694 5732356572994912.000000 4809476775479655.000000 -0.003565 
+Model 3 t statistics:   -0.001606 1.326578 1.097841 -0.001149 
  
 > 
 > 
 > cat("Model 2 contains:      ", names(coef(ss2_lm)), "\n" )
 Model 2 contains:       (Intercept) groupTRUE priority 
 > cat("Model 2 coef estimates:", sprintf("%1.6f", colMeans(the_coef2)) , "\n" )
-Model 2 coef estimates: -0.000000 1.000000 1.000000 
+Model 2 coef estimates: -0.000535 0.999827 1.000029 
 > cat("Model 2 t statistics:  ", sprintf("%1.6f", colMeans(tstat2)), "\n \n" )
-Model 2 t statistics:   -0.871805 11735923685884520.000000 6744157398210741.000000 
+Model 2 t statistics:   -0.001515 2.719860 1.565018 
  
 > 
 > 
 > cat("Model 1 contains:      ", names(coef(ss1_lm)), "\n" )
 Model 1 contains:       (Intercept) groupTRUE 
 > cat("Model 1 coef estimates:", sprintf("%1.6f", colMeans(the_coef1)) , "\n" )
-Model 1 coef estimates: 0.499781 0.999817 
+Model 1 coef estimates: 0.499400 1.000112 
 > cat("Model 1 t statistics:  ", sprintf("%1.6f", colMeans(tstat1)), "\n \n" )
-Model 1 t statistics:   6.756140 9.435099 
+Model 1 t statistics:   1.899354 2.658038 
  
 > 
 > 
 > proc.time()
     user   system  elapsed 
-8234.077  261.028 8719.708 
+6926.004  184.569 7188.579 
