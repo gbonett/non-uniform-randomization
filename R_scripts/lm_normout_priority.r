@@ -1,4 +1,4 @@
-# Covar Selection with treatment effect interaction
+# Covar Selection with priority score correlation and no treatment effect interaction
 N<-30
 size<-100000
 delta<-1
@@ -17,7 +17,7 @@ for(i in 1:size){
   random <- runif(N)
   group <- priority>=random
   outcome <- rnorm(N)
-  outcome <- outcome + priority
+  outcome <- outcome + 3.5*priority
   outcome[group] <- outcome[group] + delta
 
   #generate linear models
@@ -76,7 +76,7 @@ for(i in 1:size){
   #selection uses coinflip, not priority score
   group <- coinflip>=random
   outcome <- rnorm(N)
-  outcome <- outcome + priority
+  outcome <- outcome + 3.5*priority
   outcome[group] <- outcome[group] + delta
 
   #generate linear model
