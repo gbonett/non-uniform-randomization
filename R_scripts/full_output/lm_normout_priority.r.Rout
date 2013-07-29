@@ -1,6 +1,6 @@
 > # Covar Selection with priority score correlation and no treatment effect interaction
 > N<-30
-> size<-20000
+> size<-40000
 > delta<-1
 > 
 > tstat3<-c()
@@ -19,6 +19,9 @@
 +   outcome <- rnorm(N)
 +   outcome <- outcome + 3.5*priority
 +   outcome[group] <- outcome[group] + delta
++ 
++   #mean center priority score
++   priority <- priority - .5
 + 
 +   #generate linear models
 +   ss3_lm <- lm(outcome ~ group + priority + group*priority)
@@ -43,7 +46,7 @@ Case with priority score correlation and no interaciton effect.
 > cat("N=", N, "\n")
 N= 30 
 > cat("size=", size , "\n")
-size= 20000 
+size= 40000 
 > 
 > cat("Output from non-uniform randomization experimental design \n")
 Output from non-uniform randomization experimental design 
@@ -51,27 +54,27 @@ Output from non-uniform randomization experimental design
 > cat("Model 3 contains:      ", names(coef(ss3_lm)), "\n" )
 Model 3 contains:       (Intercept) groupTRUE priority groupTRUE:priority 
 > cat("Model 3 coef estimates:", sprintf("%1.6f",colMeans(the_coef3)) , "\n" )
-Model 3 coef estimates: 0.003729 0.993723 3.489572 0.010694 
+Model 3 coef estimates: 1.749135 1.004236 3.498420 -0.007652 
 > cat("Model 3 t statistics:  ", sprintf("%1.6f",colMeans(tstat3)), "\n \n" )
-Model 3 t statistics:   0.008379 1.077313 3.115467 0.006097 
+Model 3 t statistics:   5.471602 2.144512 3.113787 -0.004680 
  
 > 
 > 
 > cat("Model 2 contains:      ", names(coef(ss2_lm)), "\n" )
 Model 2 contains:       (Intercept) groupTRUE priority 
 > cat("Model 2 coef estimates:", sprintf("%1.6f", colMeans(the_coef2)) , "\n" )
-Model 2 coef estimates: 0.001863 0.998681 3.496168 
+Model 2 coef estimates: 1.748871 1.003580 3.494233 
 > cat("Model 2 t statistics:  ", sprintf("%1.6f", colMeans(tstat2)), "\n \n" )
-Model 2 t statistics:   0.005105 2.227144 4.477217 
+Model 2 t statistics:   6.060083 2.227846 4.450094 
  
 > 
 > 
 > cat("Model 1 contains:      ", names(coef(ss1_lm)), "\n" )
 Model 1 contains:       (Intercept) groupTRUE 
 > cat("Model 1 coef estimates:", sprintf("%1.6f", colMeans(the_coef1)) , "\n" )
-Model 1 coef estimates: 1.165984 2.161576 
+Model 1 coef estimates: 1.166128 2.169741 
 > cat("Model 1 t statistics:  ", sprintf("%1.6f", colMeans(tstat1)), "\n \n" )
-Model 1 t statistics:   3.551567 4.622997 
+Model 1 t statistics:   3.549309 4.638952 
  
 > 
 > 
@@ -95,6 +98,9 @@ Model 1 t statistics:   3.551567 4.622997
 +   outcome <- rnorm(N)
 +   outcome <- outcome + 3.5*priority
 +   outcome[group] <- outcome[group] + delta
++   
++   #mean center priority score
++   priority <- priority - .5
 + 
 +   #generate linear model
 +   ss3_lm <- lm(outcome ~ group + priority + group*priority)
@@ -119,35 +125,35 @@ Output from traditional experimental design
 > cat("N=", N, "\n")
 N= 30 
 > cat("size=", size , "\n")
-size= 20000 
+size= 40000 
 > 
 > cat("Model 3 contains:      ", names(coef(ss3_lm)), "\n" )
 Model 3 contains:       (Intercept) groupTRUE priority groupTRUE:priority 
 > cat("Model 3 coef estimates:", sprintf("%1.6f", colMeans(the_coef3)) , "\n" )
-Model 3 coef estimates: -0.005266 1.005186 3.512763 -0.012387 
+Model 3 coef estimates: 1.749993 1.001395 3.499809 0.006810 
 > cat("Model 3 t statistics:  ", sprintf("%1.6f", colMeans(tstat3)), "\n \n" )
-Model 3 t statistics:   -0.010715 1.331745 3.845596 -0.008191 
+Model 3 t statistics:   6.691728 2.661174 3.835481 0.004842 
  
 > 
 > 
 > cat("Model 2 contains:      ", names(coef(ss2_lm)), "\n" )
 Model 2 contains:       (Intercept) groupTRUE priority 
 > cat("Model 2 coef estimates:", sprintf("%1.6f", colMeans(the_coef2)) , "\n" )
-Model 2 coef estimates: -0.002744 0.999607 3.506448 
+Model 2 coef estimates: 1.749323 1.001598 3.503701 
 > cat("Model 2 t statistics:  ", sprintf("%1.6f", colMeans(tstat2)), "\n \n" )
-Model 2 t statistics:   -0.008152 2.718727 5.488002 
+Model 2 t statistics:   6.811090 2.721106 5.478612 
  
 > 
 > 
 > cat("Model 1 contains:      ", names(coef(ss1_lm)), "\n" )
 Model 1 contains:       (Intercept) groupTRUE 
 > cat("Model 1 coef estimates:", sprintf("%1.6f", colMeans(the_coef1)) , "\n" )
-Model 1 coef estimates: 1.752010 0.999302 
+Model 1 coef estimates: 1.747984 1.003710 
 > cat("Model 1 t statistics:  ", sprintf("%1.6f", colMeans(tstat1)), "\n \n" )
-Model 1 t statistics:   4.853935 1.935632 
+Model 1 t statistics:   4.851302 1.942823 
  
 > 
 > 
 > proc.time()
-   user  system elapsed 
-444.461   4.147 468.857 
+    user   system  elapsed 
+1380.510   14.901 1410.783 

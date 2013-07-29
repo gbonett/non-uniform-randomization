@@ -1,6 +1,6 @@
 # Covar Selection with priority score correlation and no treatment effect interaction
 N<-30
-size<-100000
+size<-40000
 delta<-1
 
 tstat3<-c()
@@ -19,6 +19,9 @@ for(i in 1:size){
   outcome <- rnorm(N)
   outcome <- outcome + 3.5*priority
   outcome[group] <- outcome[group] + delta
+
+  #mean center priority score
+  priority <- priority - .5
 
   #generate linear models
   ss3_lm <- lm(outcome ~ group + priority + group*priority)
@@ -78,6 +81,9 @@ for(i in 1:size){
   outcome <- rnorm(N)
   outcome <- outcome + 3.5*priority
   outcome[group] <- outcome[group] + delta
+  
+  #mean center priority score
+  priority <- priority - .5
 
   #generate linear model
   ss3_lm <- lm(outcome ~ group + priority + group*priority)
