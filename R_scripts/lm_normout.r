@@ -1,6 +1,7 @@
 # Covar Selection with treatment effect interaction
-N<-30
-size<-100000
+
+lm_normout_sim <- function(N=30,size=10000,beta_shape=1){
+
 delta<-1
 
 tstat3<-c()
@@ -13,7 +14,7 @@ the_coef1<-c()
 
 for(i in 1:size){
 
-  priority <- runif(N)
+  priority <- rbeta(N,beta_shape,beta_shape)
   random <- runif(N)
   group <- priority>=random
   outcome <- rnorm(N)
@@ -56,6 +57,7 @@ cat("Model 1 contains:      ", names(coef(ss1_lm)), "\n" )
 cat("Model 1 coef estimates:", sprintf("%1.6f", colMeans(the_coef1)) , "\n" )
 cat("Model 1 t statistics:  ", sprintf("%1.6f", colMeans(tstat1)), "\n \n" )
 
+non_unif_t<- colMeans(tstat2)[2]
 
 #Random Selection with treatment effect interaction
 tstat3<-c()
@@ -112,4 +114,10 @@ cat("Model 2 t statistics:  ", sprintf("%1.6f", colMeans(tstat2)), "\n \n" )
 cat("Model 1 contains:      ", names(coef(ss1_lm)), "\n" )
 cat("Model 1 coef estimates:", sprintf("%1.6f", colMeans(the_coef1)) , "\n" )
 cat("Model 1 t statistics:  ", sprintf("%1.6f", colMeans(tstat1)), "\n \n" )
+
+unif_t<- colMeans(tstat2)[2]
+results <- c(beta_shape, unif_t, non_unif_t)
+
+return(results)
+}
 
