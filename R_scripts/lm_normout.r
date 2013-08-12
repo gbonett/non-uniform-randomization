@@ -1,7 +1,12 @@
-# Covar Selection with treatment effect interaction
+# Non-uniform randomization, followed by traditional experimental design
+
+
+#create a function with N, number of trials, and beta(x,x) as inputs.
+#this function will return the tstat2 for the non-uniform and traditional methods
 
 lm_normout_sim <- function(N=30,size=10000,beta_shape=1){
 
+#delta = treatment effect
 delta<-1
 
 tstat3<-c()
@@ -14,10 +19,13 @@ the_coef1<-c()
 
 for(i in 1:size){
 
+  #priority score follows a beta distrobution
   priority <- rbeta(N,beta_shape,beta_shape)
   random <- runif(N)
   group <- priority>=random
   outcome <- rnorm(N)
+
+  #outcome variable is not correlated with priority score, and no treatment effect.	
   outcome[group] <- outcome[group] + delta
 
   #generate linear models
@@ -37,6 +45,8 @@ for(i in 1:size){
 
 }
 
+
+#all of this is printed to the screen
 cat("Case with correlation and interaciton effect. \n \n")
 cat("N=", N, "\n")
 cat("size=", size , "\n")
@@ -57,6 +67,8 @@ cat("Model 1 contains:      ", names(coef(ss1_lm)), "\n" )
 cat("Model 1 coef estimates:", sprintf("%1.6f", colMeans(the_coef1)) , "\n" )
 cat("Model 1 t statistics:  ", sprintf("%1.6f", colMeans(tstat1)), "\n \n" )
 
+
+#saves the tstat2 to return later
 non_unif_t<- colMeans(tstat2)[2]
 
 #Random Selection with treatment effect interaction
@@ -115,6 +127,8 @@ cat("Model 1 contains:      ", names(coef(ss1_lm)), "\n" )
 cat("Model 1 coef estimates:", sprintf("%1.6f", colMeans(the_coef1)) , "\n" )
 cat("Model 1 t statistics:  ", sprintf("%1.6f", colMeans(tstat1)), "\n \n" )
 
+
+#here's the functions output
 unif_t<- colMeans(tstat2)[2]
 results <- c(beta_shape, unif_t, non_unif_t)
 
