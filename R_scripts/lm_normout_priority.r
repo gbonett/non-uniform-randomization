@@ -1,28 +1,34 @@
-# Covar Selection with priority score correlation and no treatment effect interaction
-N<-30
-size<-40000
-B2_coef<-3.5
+# Non-uniform randomization, followed by traditional experimental design
+
+#This is a function with N, number of trials, and beta(x,x) as inputs.
+#It will return the tstat2 for the non-uniform and traditional methods.
+
+lm_normout_priority_sim <- function(N=30,size=10000,beta_shape=1,corr=.2){
+
+#delta = treatment effect
 delta<-1
 
+#initialize 
 tstat3<-c()
 tstat2<-c()
 tstat1<-c()
 
-coefs3<-c()
-coefs2<-c()
-coefs1<-c()
+the_coef3<-c()
+the_coef2<-c()
+the_coef1<-c()
 
 for(i in 1:size){
 
-  priority <- runif(N)
+  #priority score follows a beta distribution
+  priority <- rbeta(N,beta_shape,beta_shape)
   random <- runif(N)
-  group <- priority>=random
-  outcome <- rnorm(N)
-  outcome <- outcome + B2_coef*priority
-  outcome[group] <- outcome[group] + delta
 
-  #mean center priority score
-  priority <- priority - .5
+  #assignment based on priority score
+  group <- priority>=random
+
+  #outcome variable is normal and correlated with priority score, and no interaction effect.	
+  outcome <- corr*priority*(1/sqrt((1/12))) + sqrt(1-corr^2)*rnorm(N)
+  outcome[group] <- outcome[group] + delta
 
   #generate linear models
   ss3_lm <- lm(outcome ~ group + priority + group*priority)
@@ -35,41 +41,46 @@ for(i in 1:size){
   tstat1<-rbind(tstat1,summary(ss1_lm)$coef[,1]/summary(ss1_lm)$coef[,2])
 
   #coefficiencts for each linear model
-  coefs3<-rbind(coefs3,summary(ss3_lm)$coef[,1])
-  coefs2<-rbind(coefs2,summary(ss2_lm)$coef[,1])
-  coefs1<-rbind(coefs1,summary(ss1_lm)$coef[,1])
+  the_coef3<-rbind(the_coef3,summary(ss3_lm)$coef[,1])
+  the_coef2<-rbind(the_coef2,summary(ss2_lm)$coef[,1])
+  the_coef1<-rbind(the_coef1,summary(ss1_lm)$coef[,1])
 
 }
 
-cat("Case with priority score correlation and no interaciton effect. \n \n")
+
+#all of this is printed to the screen
+cat("Case with correlation and interaction effect. \n \n")
 cat("N=", N, "\n")
 cat("size=", size , "\n")
 
 cat("Output from non-uniform randomization experimental design \n")
 
 cat("Model 3 contains:      ", names(coef(ss3_lm)), "\n" )
-cat("Model 3 coef estimates:", sprintf("%1.6f",colMeans(coefs3)) , "\n" )
+cat("Model 3 coef estimates:", sprintf("%1.6f",colMeans(the_coef3)) , "\n" )
 cat("Model 3 t statistics:  ", sprintf("%1.6f",colMeans(tstat3)), "\n \n" )
 
 
 cat("Model 2 contains:      ", names(coef(ss2_lm)), "\n" )
-cat("Model 2 coef estimates:", sprintf("%1.6f", colMeans(coefs2)) , "\n" )
+cat("Model 2 coef estimates:", sprintf("%1.6f", colMeans(the_coef2)) , "\n" )
 cat("Model 2 t statistics:  ", sprintf("%1.6f", colMeans(tstat2)), "\n \n" )
 
 
 cat("Model 1 contains:      ", names(coef(ss1_lm)), "\n" )
-cat("Model 1 coef estimates:", sprintf("%1.6f", colMeans(coefs1)) , "\n" )
+cat("Model 1 coef estimates:", sprintf("%1.6f", colMeans(the_coef1)) , "\n" )
 cat("Model 1 t statistics:  ", sprintf("%1.6f", colMeans(tstat1)), "\n \n" )
 
+
+#saves the tstat2 to return later
+non_unif_t <- colMeans(tstat2)[2]
 
 #Random Selection with treatment effect interaction
 tstat3<-c()
 tstat2<-c()
 tstat1<-c()
 
-coefs3<-c()
-coefs2<-c()
-coefs1<-c()
+the_coef3<-c()
+the_coef2<-c()
+the_coef1<-c()
 
 for(i in 1:size){
 
@@ -79,12 +90,8 @@ for(i in 1:size){
 
   #selection uses coinflip, not priority score
   group <- coinflip>=random
-  outcome <- rnorm(N)
-  outcome <- outcome + B2_coef*priority
+  outcome <- corr*priority*(1/sqrt((1/12))) + sqrt(1-corr^2)*rnorm(N)
   outcome[group] <- outcome[group] + delta
-  
-  #mean center priority score
-  priority <- priority - .5
 
   #generate linear model
   ss3_lm <- lm(outcome ~ group + priority + group*priority)
@@ -96,10 +103,10 @@ for(i in 1:size){
   tstat2<-rbind(tstat2,summary(ss2_lm)$coef[,1]/summary(ss2_lm)$coef[,2])
   tstat1<-rbind(tstat1,summary(ss1_lm)$coef[,1]/summary(ss1_lm)$coef[,2])
 
-  #coefficiencts for each linear model
-  coefs3<-rbind(coefs3,summary(ss3_lm)$coef[,1])
-  coefs2<-rbind(coefs2,summary(ss2_lm)$coef[,1])
-  coefs1<-rbind(coefs1,summary(ss1_lm)$coef[,1])
+  #coefficients for each linear model
+  the_coef3<-rbind(the_coef3,summary(ss3_lm)$coef[,1])
+  the_coef2<-rbind(the_coef2,summary(ss2_lm)$coef[,1])
+  the_coef1<-rbind(the_coef1,summary(ss1_lm)$coef[,1])
 
 }
 
@@ -109,16 +116,24 @@ cat("N=", N, "\n")
 cat("size=", size , "\n")
 
 cat("Model 3 contains:      ", names(coef(ss3_lm)), "\n" )
-cat("Model 3 coef estimates:", sprintf("%1.6f", colMeans(coefs3)) , "\n" )
+cat("Model 3 coef estimates:", sprintf("%1.6f", colMeans(the_coef3)) , "\n" )
 cat("Model 3 t statistics:  ", sprintf("%1.6f", colMeans(tstat3)), "\n \n" )
 
 
 cat("Model 2 contains:      ", names(coef(ss2_lm)), "\n" )
-cat("Model 2 coef estimates:", sprintf("%1.6f", colMeans(coefs2)) , "\n" )
+cat("Model 2 coef estimates:", sprintf("%1.6f", colMeans(the_coef2)) , "\n" )
 cat("Model 2 t statistics:  ", sprintf("%1.6f", colMeans(tstat2)), "\n \n" )
 
 
 cat("Model 1 contains:      ", names(coef(ss1_lm)), "\n" )
-cat("Model 1 coef estimates:", sprintf("%1.6f", colMeans(coefs1)) , "\n" )
+cat("Model 1 coef estimates:", sprintf("%1.6f", colMeans(the_coef1)) , "\n" )
 cat("Model 1 t statistics:  ", sprintf("%1.6f", colMeans(tstat1)), "\n \n" )
+
+
+#here's the functions output
+unif_t <- colMeans(tstat1)[2]
+results <- c(beta_shape, unif_t, non_unif_t)
+
+return(results)
+}
 
