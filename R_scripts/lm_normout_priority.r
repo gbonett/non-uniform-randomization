@@ -3,6 +3,8 @@
 #This is a function with N, number of trials, and beta(x,x) as inputs.
 #It will return the tstat2 for the non-uniform and traditional methods.
 
+
+
 lm_normout_priority_sim <- function(N=30,size=10000,beta_shape=1,corr=.2){
 
 #delta = treatment effect
@@ -27,7 +29,7 @@ for(i in 1:size){
   group <- priority>=random
 
   #outcome variable is normal and correlated with priority score, and no interaction effect.	
-  outcome <- corr*priority*(1/sqrt((1/12))) + sqrt(1-corr^2)*rnorm(N)
+  outcome <- corr*(priority-.5)^2*(1/sqrt((1/12))) + sqrt(1-corr^2)*rnorm(N)
   outcome[group] <- outcome[group] + delta
 
   #generate linear models
@@ -90,7 +92,7 @@ for(i in 1:size){
 
   #selection uses coinflip, not priority score
   group <- coinflip>=random
-  outcome <- corr*priority*(1/sqrt((1/12))) + sqrt(1-corr^2)*rnorm(N)
+  outcome <- corr*(priority-.5)^2*(1/sqrt((1/12))) + sqrt(1-corr^2)*rnorm(N)
   outcome[group] <- outcome[group] + delta
 
   #generate linear model
