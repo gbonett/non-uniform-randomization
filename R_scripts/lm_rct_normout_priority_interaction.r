@@ -4,17 +4,19 @@
 #It will return the tstat2 for the non-uniform and traditional methods.
 
 
-
-lm_normout_interaction_sim <- function(N=30,size=10000,beta_shape=1){
+lm_ret_normout_interaction_sim <- function(N=30,size=20000,beta_shape=1){
 
 #delta = treatment effect
 delta<-1
+jitter<-.005
 
 #initialize 
+tstat4<-c()
 tstat3<-c()
 tstat2<-c()
 tstat1<-c()
 
+the_coef4<-c()
 the_coef3<-c()
 the_coef2<-c()
 the_coef1<-c()
@@ -24,6 +26,16 @@ for(i in 1:size){
   #priority score follows a beta distribution
   priority <- rbeta(N,beta_shape,beta_shape)
   random <- runif(N)
+  coinflip <- runif(N)
+  coin <- coinflip>.5
+  
+  #add jitter to the winner of the coin flip
+  priority <- priority + jitter*(coin)
+  priority <- priority - jitter*(!coin)
+  
+  #check
+  mean(priority[coin])
+  mean(priority[!coin])
 
   #assignment based on priority score
   group <- priority>=random
@@ -33,16 +45,19 @@ for(i in 1:size){
   outcome[group] <- outcome[group] + delta*(priority[group]-.5)^2
 
   #generate linear models
-  ss3_lm <- lm(outcome ~ group + priority + group*priority)
+  ss4_lm <- lm(outcome ~ group + priority + group*priority)
+  ss3_lm <- lm(outcome ~ group + priority + coin) 
   ss2_lm <- lm(outcome ~ group + priority)
   ss1_lm <- lm(outcome ~ group)
 
   #calculate T statistic for each linear model
+  tstat4<-rbind(tstat4,summary(ss4_lm)$coef[,1]/summary(ss4_lm)$coef[,2])
   tstat3<-rbind(tstat3,summary(ss3_lm)$coef[,1]/summary(ss3_lm)$coef[,2])
   tstat2<-rbind(tstat2,summary(ss2_lm)$coef[,1]/summary(ss2_lm)$coef[,2])
   tstat1<-rbind(tstat1,summary(ss1_lm)$coef[,1]/summary(ss1_lm)$coef[,2])
 
   #coefficiencts for each linear model
+  the_coef4<-rbind(the_coef4,summary(ss4_lm)$coef[,1])
   the_coef3<-rbind(the_coef3,summary(ss3_lm)$coef[,1])
   the_coef2<-rbind(the_coef2,summary(ss2_lm)$coef[,1])
   the_coef1<-rbind(the_coef1,summary(ss1_lm)$coef[,1])
